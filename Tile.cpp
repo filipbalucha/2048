@@ -3,9 +3,9 @@
 //
 
 #include "Tile.hpp"
-#define DEFAULT_VALUE 0
 
-Tile::Tile() : value(DEFAULT_VALUE){}
+
+Tile::Tile() : value(EMPTY_VALUE){}
 
 Tile Tile::operator+ (const Tile& rhs) {
     // TODO temp
@@ -16,8 +16,17 @@ int Tile::getValue() const {
     return value;
 }
 
-void Tile::setValue(int value) {
-    Tile::value = value;
+void Tile::makeVisible() {
+    value = (double)rand() / RAND_MAX < 0.9 ? 2 : 4;
 }
+
+bool Tile::hasWinValue() const {
+    return value == WIN_VALUE;
+}
+
+bool Tile::isEmpty() const {
+    return value == EMPTY_VALUE;
+}
+
 
 

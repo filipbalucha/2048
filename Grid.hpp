@@ -5,6 +5,10 @@
 #ifndef INC_2048_GRID_HPP
 #define INC_2048_GRID_HPP
 #include "Tile.hpp"
+#include <cstdlib>
+#include <ctime>
+#include <iostream>
+#include <sstream>
 #include <vector>
 
 class Grid {
@@ -12,12 +16,13 @@ private:
     int size;
     std::vector<std::vector<Tile>> grid;
 public:
-    Grid(int size);
+    explicit Grid(int size);
 
     void display();
-
+    bool moveTiles();
     bool insertTile();
-    bool checkWin();
+    bool isWin();
+    bool isLose();
 };
 
 
