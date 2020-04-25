@@ -30,7 +30,7 @@ void Game::play() {
                 break;
             case KEY_LEFT:
                 std::cout << "KEY LEFT!" << std::endl;
-                grid.leftMoveTiles();
+                grid.moveH(LEFT);
                 break;
             case KEY_DOWN:
                 std::cout << "KEY DOWN!" << std::endl;
@@ -38,7 +38,7 @@ void Game::play() {
                 break;
             case KEY_RIGHT:
                 std::cout << "KEY RIGHT!" << std::endl;
-                grid.rightMoveTiles();
+                grid.moveH(RIGHT);
                 break;
             case KEY_EXIT:
                 std::cout << "Exiting..." << std::endl;

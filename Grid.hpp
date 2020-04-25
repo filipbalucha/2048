@@ -13,30 +13,35 @@
 
 //TODO define type for row
 
+enum dirH {LEFT, RIGHT};
+enum dirV {UP, DOWN};
+
 class Grid {
 private:
     int size;
     std::vector<std::vector<Tile*>*> grid;
-    bool leftAdd();
-    bool leftCollapse();
-    bool rightAdd();
-    bool rightCollapse();
     bool upAdd();
     bool upCollapse();
     bool downAdd();
     bool downCollapse();
 
+    bool addH(dirH dir);
+    bool collapseH(dirH dir);
+    bool addV(dirV dir);
+    bool collapseV(dirV dir);
+
 public:
     explicit Grid(int size);
     virtual ~Grid();
     void display();
-    void leftMoveTiles();
-    void rightMoveTiles();
     void upMoveTiles();
     void downMoveTiles();
     bool insertTile();
     bool isWin();
     bool isLose();
+
+    void moveH(dirH dir);
+    void moveV(dirV dir);
 };
 
 

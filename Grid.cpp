@@ -16,8 +16,7 @@ Grid::Grid(int size) : size(size) {
         grid.push_back(row);
     }
 
-//    int numTiles = size*size/8;
-    int numTiles = size*size - 1;
+    int numTiles = size*size/8;
     for(int i = 0; i < numTiles; i++) {
         insertTile();
     }
@@ -83,116 +82,6 @@ Grid::~Grid() {
         }
         delete row;
     }
-}
-
-void Grid::leftMoveTiles() {
-    bool collapsedBefore = leftCollapse();
-    bool added = leftAdd();
-    bool collapsedAfter = leftCollapse();
-    if(added || collapsedBefore || collapsedAfter) {
-        insertTile();
-    }
-}
-
-bool Grid::leftAdd() {
-    bool addedAnyTwo = false;
-    for(auto row : grid) {
-        int col = 0;
-        while(col < row->size() - 1) {
-            Tile* left = row->at(col);
-            Tile* right = row->at(col + 1);
-            bool added = left->add(right);
-            if(added) {
-                col += 2;
-                addedAnyTwo = true;
-            } else {
-                col += 1;
-            }
-        }
-    }
-    return addedAnyTwo;
-}
-
-bool Grid::leftCollapse() {
-    bool collapsed = false;
-    for(std::vector<Tile*>* row : grid) {
-        int col = 0;
-        while(col < row->size() - 1) {
-            if(row->at(col)->hasValue()) {
-                col++;
-                continue;
-            }
-            int colNext = col + 1;
-            while(colNext < row->size()) {
-                if(row->at(colNext)->hasValue()) {
-                    // Swap values
-                    int val = row->at(colNext)->getValue();
-                    row->at(col)->setValue(val);
-                    row->at(colNext)->erase();
-                    collapsed = true;
-                    break;
-                }
-                colNext++;
-            }
-            col = colNext;
-        }
-    }
-    return collapsed;
-}
-
-void Grid::rightMoveTiles() {
-    bool collapsedBefore = rightCollapse();
-    bool added = rightAdd();
-    bool collapsedAfter = rightCollapse();
-    if(added || collapsedBefore || collapsedAfter) {
-        insertTile();
-    }
-}
-
-bool Grid::rightAdd() {
-    bool addedAnyTwo = false;
-    for(auto row : grid) {
-        int col = row->size() - 1;
-        while(0 < col) {
-            Tile* left = row->at(col - 1);
-            Tile* right = row->at(col);
-            bool added = right->add(left);
-            if(added) {
-                col -= 2;
-                addedAnyTwo = true;
-            } else {
-                col -= 1;
-            }
-        }
-    }
-    return addedAnyTwo;
-}
-
-bool Grid::rightCollapse() {
-    bool collapsed = false;
-    for(std::vector<Tile*>* row : grid) {
-        int col = row->size() - 1;
-        while(0 < col) {
-            if(row->at(col)->hasValue()) {
-                col--;
-                continue;
-            }
-            int colNext = col - 1;
-            while(0 <= colNext) {
-                if(row->at(colNext)->hasValue()) {
-                    // Swap values
-                    int val = row->at(colNext)->getValue();
-                    row->at(col)->setValue(val);
-                    row->at(colNext)->erase();
-                    collapsed = true;
-                    break;
-                }
-                colNext--;
-            }
-            col = colNext;
-        }
-    }
-    return collapsed;
 }
 
 void Grid::upMoveTiles() {
@@ -303,4 +192,76 @@ bool Grid::downCollapse() {
         }
     }
     return collapsed;
+}
+
+void Grid::moveH(dirH dir) {
+    bool collapsedBefore = collapseH(dir);
+    bool added = addH(dir);
+    bool collapsedAfter = collapseH(dir);
+    if(added || collapsedBefore || collapsedAfter) {
+        insertTile();
+    }
+}
+
+bool Grid::addH(dirH dir) {
+    bool addedAnyTwo = false;
+    for(auto row : grid) {
+        int col = dir == LEFT ? 0 : size-2;
+        while(dir == LEFT ? col < size-1 : 0 < col) {
+            Tile* left = row->at(col);
+            Tile* right = row->at(col+1);
+            bool added = dir == LEFT ? left->add(right) : right->add(left);
+            if(added) {
+                col = dir == LEFT ? col+2 : col-2;
+                addedAnyTwo = true;
+            } else {
+                col = dir == LEFT ? col+1 : col-1;
+            }
+        }
+    }
+    return addedAnyTwo;
+}
+
+bool Grid::collapseH(dirH dir) {
+    bool collapsed = false;
+    for(std::vector<Tile*>* row : grid) {
+        int col = dir == LEFT ? 0 : size-1;
+        while(dir == LEFT ? col < size-1 : 0 < col) {
+            if(row->at(col)->hasValue()) {
+                col = dir == LEFT ? col + 1 : col - 1;
+                continue;
+            }
+            int colNext = dir == LEFT ? col + 1 : col - 1;
+            while(dir == LEFT ? colNext < size : 0 <= colNext) {
+                if(row->at(colNext)->hasValue()) {
+                    // Swap values
+                    int val = row->at(colNext)->getValue();
+                    row->at(col)->setValue(val);
+                    row->at(colNext)->erase();
+                    collapsed = true;
+                    break;
+                }
+                colNext = dir == LEFT ? colNext + 1 : colNext - 1;
+            }
+            col = colNext;
+        }
+    }
+    return collapsed;
+}
+
+bool Grid::addV(dirV dir) {
+    return false;
+}
+
+bool Grid::collapseV(dirV dir) {
+    return false;
+}
+
+void Grid::moveV(dirV dir) {
+    bool collapsedBefore = collapseV(dir);
+    bool added = addV(dir);
+    bool collapsedAfter = collapseV(dir);
+    if(added || collapsedBefore || collapsedAfter) {
+        insertTile();
+    }
 }
