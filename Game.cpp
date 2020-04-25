@@ -12,32 +12,22 @@ void Game::play() {
             return;
         }
         if(grid.isWin()) {
-            std::cout << "You won!" << std::endl << "Continue? [y|n]" << std::endl;
-            char answer;
-            std::cin >> answer;
-            if(answer != 'y') {
-                std::cout << "Exiting..." << std::endl;
-                return;
-            }
+            std::cout << "You won!" << std::endl;
         }
         char input;
         std::cout << "Press a key: ";
         std::cin >> input;
         switch(input) {
             case KEY_UP:
-                std::cout << "KEY UP!" << std::endl;
-                grid.upMoveTiles();
+                grid.moveV(UP);
                 break;
             case KEY_LEFT:
-                std::cout << "KEY LEFT!" << std::endl;
                 grid.moveH(LEFT);
                 break;
             case KEY_DOWN:
-                std::cout << "KEY DOWN!" << std::endl;
-                grid.downMoveTiles();
+                grid.moveV(DOWN);
                 break;
             case KEY_RIGHT:
-                std::cout << "KEY RIGHT!" << std::endl;
                 grid.moveH(RIGHT);
                 break;
             case KEY_EXIT:

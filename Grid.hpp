@@ -11,32 +11,29 @@
 #include <sstream>
 #include <vector>
 
-//TODO define type for row
-
+using Row = std::vector<Tile*>;
 enum dirH {LEFT, RIGHT};
 enum dirV {UP, DOWN};
 
 class Grid {
 private:
     int size;
-    std::vector<std::vector<Tile*>*> grid;
-    bool upAdd();
-    bool upCollapse();
-    bool downAdd();
-    bool downCollapse();
+    std::vector<Row*> grid;
 
     bool addH(dirH dir);
-    bool collapseH(dirH dir);
     bool addV(dirV dir);
+
+    bool collapseH(dirH dir);
     bool collapseV(dirV dir);
 
 public:
     explicit Grid(int size);
     virtual ~Grid();
+
     void display();
-    void upMoveTiles();
-    void downMoveTiles();
+
     bool insertTile();
+
     bool isWin();
     bool isLose();
 

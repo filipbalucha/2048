@@ -30,9 +30,7 @@ public:
 #endif //INC_2048_TILE_H
 
 // TODO
-// implement move & collapse for other directions
-// only add new tile if successful move
-
-// for animation
+// implement score
+// TODO for animation:
 // implement position struct (x,y)
 // add previous and current position

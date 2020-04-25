@@ -6,12 +6,11 @@
 Grid::Grid(int size) : size(size) {
     grid.reserve(size);
     for(int y = 0; y < size; y++) {
-        auto* row = new std::vector<Tile*>;
+        auto* row = new Row;
         row->reserve(size);
         for(int x = 0; x < size; x++) {
             Tile* tile = new Tile();
             row->push_back(tile);
-//            delete tile;
         }
         grid.push_back(row);
     }
@@ -24,7 +23,7 @@ Grid::Grid(int size) : size(size) {
 
 void Grid::display() {
     std::stringstream ss;
-    for (std::vector<Tile*>* row : grid) {
+    for (Row* row : grid) {
         ss << ' ';
         for (Tile* tile : *row) {
             ss << tile->getValue() << ' ';
@@ -37,7 +36,7 @@ void Grid::display() {
 bool Grid::insertTile() {
     std::vector<Tile*> available;
     available.reserve(size*size);
-    for(std::vector<Tile*>* row : grid) {
+    for(Row* row : grid) {
         for(Tile* tile : *row) {
             if(tile->isEmpty()) {
                 available.push_back(tile);
@@ -53,7 +52,7 @@ bool Grid::insertTile() {
 }
 
 bool Grid::isWin() {
-    for(std::vector<Tile*>* row : grid) {
+    for(Row* row : grid) {
         for(Tile* tile : *row) {
             if(tile->hasWinValue()) {
                 return true;
@@ -65,7 +64,7 @@ bool Grid::isWin() {
 
 bool Grid::isLose() {
     // TODO check for pairs of equal numbers vertically and horizontally
-    for(std::vector<Tile*>* row : grid) {
+    for(Row* row : grid) {
         for(Tile* tile : *row) {
             if(tile->isEmpty()) {
                 return false;
@@ -82,116 +81,6 @@ Grid::~Grid() {
         }
         delete row;
     }
-}
-
-void Grid::upMoveTiles() {
-    bool collapsedBefore = upCollapse();
-    bool added = upAdd();
-    bool collapsedAfter = upCollapse();
-    if(added || collapsedBefore || collapsedAfter) {
-        insertTile();
-    }
-}
-
-bool Grid::upAdd() {
-    bool addedAnyTwo = false;
-    for(int col = 0; col < size; col++) {
-        int row = 0;
-        while(row < size - 1) {
-            Tile* up = grid.at(row)->at(col);
-            Tile* down = grid.at(row + 1)->at(col);
-            bool added = up->add(down);
-            if(added) {
-                row += 2;
-                addedAnyTwo = true;
-            } else {
-                row += 1;
-            }
-        }
-    }
-    return addedAnyTwo;
-}
-
-bool Grid::upCollapse() {
-    bool collapsed = false;
-    for(int col = 0; col < size; col++) {
-        int row = 0;
-        while(row < size - 1) {
-            if(grid.at(row)->at(col)->hasValue()) {
-                row++;
-                continue;
-            }
-            int rowNext = row + 1;
-            while(rowNext < size) {
-                if(grid.at(rowNext)->at(col)->hasValue()) {
-                    // Swap values
-                    int val = grid.at(rowNext)->at(col)->getValue();
-                    grid.at(row)->at(col)->setValue(val);
-                    grid.at(rowNext)->at(col)->erase();
-                    collapsed = true;
-                    break;
-                }
-                rowNext++;
-            }
-            row = rowNext;
-        }
-    }
-    return collapsed;
-}
-
-void Grid::downMoveTiles() {
-    bool collapsedBefore = downCollapse();
-    bool added = downAdd();
-    bool collapsedAfter = downCollapse();
-    if(added || collapsedBefore || collapsedAfter) {
-        insertTile();
-    }
-}
-
-bool Grid::downAdd() {
-    bool addedAnyTwo = false;
-    for(int col = 0; col < size; col++) {
-        int row = size - 1;
-        while(row > 0) {
-            Tile* up = grid.at(row)->at(col);
-            Tile* down = grid.at(row - 1)->at(col);
-            bool added = down->add(up);
-            if(added) {
-                row -= 2;
-                addedAnyTwo = true;
-            } else {
-                row -= 1;
-            }
-        }
-    }
-    return addedAnyTwo;
-}
-
-bool Grid::downCollapse() {
-    bool collapsed = false;
-    for(int col = 0; col < size; col++) {
-        int row = size - 1;
-        while(row > 0) {
-            if(grid.at(row)->at(col)->hasValue()) {
-                row--;
-                continue;
-            }
-            int rowNext = row - 1;
-            while(rowNext >= 0) {
-                if(grid.at(rowNext)->at(col)->hasValue()) {
-                    // Swap values
-                    int val = grid.at(rowNext)->at(col)->getValue();
-                    grid.at(row)->at(col)->setValue(val);
-                    grid.at(rowNext)->at(col)->erase();
-                    collapsed = true;
-                    break;
-                }
-                rowNext--;
-            }
-            row = rowNext;
-        }
-    }
-    return collapsed;
 }
 
 void Grid::moveH(dirH dir) {
@@ -224,7 +113,7 @@ bool Grid::addH(dirH dir) {
 
 bool Grid::collapseH(dirH dir) {
     bool collapsed = false;
-    for(std::vector<Tile*>* row : grid) {
+    for(Row* row : grid) {
         int col = dir == LEFT ? 0 : size-1;
         while(dir == LEFT ? col < size-1 : 0 < col) {
             if(row->at(col)->hasValue()) {
@@ -249,14 +138,6 @@ bool Grid::collapseH(dirH dir) {
     return collapsed;
 }
 
-bool Grid::addV(dirV dir) {
-    return false;
-}
-
-bool Grid::collapseV(dirV dir) {
-    return false;
-}
-
 void Grid::moveV(dirV dir) {
     bool collapsedBefore = collapseV(dir);
     bool added = addV(dir);
@@ -264,4 +145,50 @@ void Grid::moveV(dirV dir) {
     if(added || collapsedBefore || collapsedAfter) {
         insertTile();
     }
+}
+
+bool Grid::addV(dirV dir) {
+    bool addedAnyTwo = false;
+    for(int col = 0; col < size; col++) {
+        int row = dir == UP ? 0 : size-2;
+        while(dir == UP ? row < size-1 : 0 < row) {
+            Tile* up = grid.at(row)->at(col);
+            Tile* down = grid.at(row + 1)->at(col);
+            bool added = up->add(down);
+            if(added) {
+                row = dir == UP ? row += 2 : row -= 2;
+                addedAnyTwo = true;
+            } else {
+                row = dir == UP ? row += 1 : row -= 1;
+            }
+        }
+    }
+    return addedAnyTwo;
+}
+
+bool Grid::collapseV(dirV dir) {
+    bool collapsed = false;
+    for(int col = 0; col < size; col++) {
+        int row = dir == UP ? 0 : size-1;
+        while(dir == UP ? row < size-1 : 0 < row) {
+            if(grid.at(row)->at(col)->hasValue()) {
+                row = dir == UP ? row + 1 : row - 1;
+                continue;
+            }
+            int rowNext = dir == UP ? row + 1 : row - 1;
+            while(dir == UP ? rowNext < size : 0 <= rowNext) {
+                if(grid.at(rowNext)->at(col)->hasValue()) {
+                    // Swap values
+                    int val = grid.at(rowNext)->at(col)->getValue();
+                    grid.at(row)->at(col)->setValue(val);
+                    grid.at(rowNext)->at(col)->erase();
+                    collapsed = true;
+                    break;
+                }
+                rowNext = dir == UP ? rowNext + 1 : rowNext -1;
+            }
+            row = rowNext;
+        }
+    }
+    return collapsed;
 }
