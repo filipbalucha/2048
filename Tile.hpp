@@ -15,11 +15,12 @@ public:
     Tile();
 
     bool add(Tile* tile);
-    int getValue();
+    int getValue() const;
 
     void setValue(int value);
 
-    bool isEmpty();
+    bool isEmpty() const;
+    bool hasValue() const;
     void erase();
     void makeVisible();
     bool hasWinValue();

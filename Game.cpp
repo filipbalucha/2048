@@ -26,7 +26,7 @@ void Game::play() {
         switch(input) {
             case KEY_UP:
                 std::cout << "KEY UP!" << std::endl;
-                grid.moveTiles();
+                grid.upMoveTiles();
                 break;
             case KEY_LEFT:
                 std::cout << "KEY LEFT!" << std::endl;
@@ -34,11 +34,11 @@ void Game::play() {
                 break;
             case KEY_DOWN:
                 std::cout << "KEY DOWN!" << std::endl;
-                grid.moveTiles();
+                grid.downMoveTiles();
                 break;
             case KEY_RIGHT:
                 std::cout << "KEY RIGHT!" << std::endl;
-                grid.moveTiles();
+                grid.rightMoveTiles();
                 break;
             case KEY_EXIT:
                 std::cout << "Exiting..." << std::endl;

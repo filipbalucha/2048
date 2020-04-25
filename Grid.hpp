@@ -17,18 +17,23 @@ class Grid {
 private:
     int size;
     std::vector<std::vector<Tile*>*> grid;
-public:
-    explicit Grid(int size);
-
-    virtual ~Grid();
-
-    void display();
-    bool moveTiles();
-
-    void leftMoveTiles();
     bool leftAdd();
     bool leftCollapse();
+    bool rightAdd();
+    bool rightCollapse();
+    bool upAdd();
+    bool upCollapse();
+    bool downAdd();
+    bool downCollapse();
 
+public:
+    explicit Grid(int size);
+    virtual ~Grid();
+    void display();
+    void leftMoveTiles();
+    void rightMoveTiles();
+    void upMoveTiles();
+    void downMoveTiles();
     bool insertTile();
     bool isWin();
     bool isLose();

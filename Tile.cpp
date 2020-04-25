@@ -9,7 +9,7 @@ Tile::Tile() : value(EMPTY_VALUE){}
 
 
 
-int Tile::getValue() {
+int Tile::getValue() const {
     return value;
 }
 
@@ -21,8 +21,13 @@ bool Tile::hasWinValue() {
     return value == WIN_VALUE;
 }
 
-bool Tile::isEmpty() {
+bool Tile::isEmpty() const {
     return value == EMPTY_VALUE;
+}
+
+
+bool Tile::hasValue() const {
+    return !isEmpty();
 }
 
 bool Tile::add(Tile *other) {
