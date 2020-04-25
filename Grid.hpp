@@ -18,10 +18,11 @@ enum dirV {UP, DOWN};
 class Grid {
 private:
     int size;
+    int score;
     std::vector<Row*> grid;
 
-    bool addH(dirH dir);
-    bool addV(dirV dir);
+    int addH(dirH dir);
+    int addV(dirV dir);
 
     bool collapseH(dirH dir);
     bool collapseV(dirV dir);

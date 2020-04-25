@@ -3,7 +3,7 @@
 //
 #include "Grid.hpp"
 
-Grid::Grid(int size) : size(size) {
+Grid::Grid(int size) : size(size), score(0) {
     grid.reserve(size);
     for(int y = 0; y < size; y++) {
         auto* row = new Row;
@@ -24,12 +24,13 @@ Grid::Grid(int size) : size(size) {
 
 void Grid::display() {
     std::stringstream ss;
+    ss << "Score: " << score << std::endl;
     for (Row* row : grid) {
         ss << ' ';
         for (Tile* tile : *row) {
             ss << tile->getValue() << ' ';
         }
-        ss << '\n';
+        ss << std::endl;
     }
     std::cout << ss.str();
 }
@@ -106,15 +107,16 @@ Grid::~Grid() {
 
 void Grid::moveH(dirH dir) {
     bool collapsedBefore = collapseH(dir);
-    bool added = addH(dir);
+    int pointsAdded = addH(dir);
     bool collapsedAfter = collapseH(dir);
-    if(added || collapsedBefore || collapsedAfter) {
+    if(pointsAdded != 0 || collapsedBefore || collapsedAfter) {
         insertTile();
     }
+    score += pointsAdded;
 }
 
-bool Grid::addH(dirH dir) {
-    bool addedAnyTwo = false;
+int Grid::addH(dirH dir) {
+    int points = 0;
     for(auto row : grid) {
         int col = dir == LEFT ? 0 : size-2;
         while(dir == LEFT ? col < size-1 : 0 <= col) {
@@ -123,13 +125,13 @@ bool Grid::addH(dirH dir) {
             bool added = left->add(right);
             if(added) {
                 col = dir == LEFT ? col+2 : col-2;
-                addedAnyTwo = true;
+                points += left->getValue();
             } else {
                 col = dir == LEFT ? col+1 : col-1;
             }
         }
     }
-    return addedAnyTwo;
+    return points;
 }
 
 bool Grid::collapseH(dirH dir) {
@@ -161,15 +163,16 @@ bool Grid::collapseH(dirH dir) {
 
 void Grid::moveV(dirV dir) {
     bool collapsedBefore = collapseV(dir);
-    bool added = addV(dir);
+    int pointsAdded = addV(dir);
     bool collapsedAfter = collapseV(dir);
-    if(added || collapsedBefore || collapsedAfter) {
+    if(pointsAdded != 0 || collapsedBefore || collapsedAfter) {
         insertTile();
     }
+    score += pointsAdded;
 }
 
-bool Grid::addV(dirV dir) {
-    bool addedAnyTwo = false;
+int Grid::addV(dirV dir) {
+    int points = 0;
     for(int col = 0; col < size; col++) {
         int row = dir == UP ? 0 : size-2;
         while(dir == UP ? row < size-1 : 0 <= row) {
@@ -178,13 +181,13 @@ bool Grid::addV(dirV dir) {
             bool added = up->add(down);
             if(added) {
                 row = dir == UP ? row += 2 : row -= 2;
-                addedAnyTwo = true;
+                points += up->getValue();
             } else {
                 row = dir == UP ? row += 1 : row -= 1;
             }
         }
     }
-    return addedAnyTwo;
+    return points;
 }
 
 bool Grid::collapseV(dirV dir) {
