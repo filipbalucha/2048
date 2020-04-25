@@ -15,7 +15,8 @@ Grid::Grid(int size) : size(size) {
         grid.push_back(row);
     }
 
-    int numTiles = size*size/8;
+//    int numTiles = size*size/8;
+    int numTiles = size*size;
     for(int i = 0; i < numTiles; i++) {
         insertTile();
     }
@@ -63,10 +64,30 @@ bool Grid::isWin() {
 }
 
 bool Grid::isLose() {
-    // TODO check for pairs of equal numbers vertically and horizontally
+    // Check if contains empty value
     for(Row* row : grid) {
         for(Tile* tile : *row) {
             if(tile->isEmpty()) {
+                return false;
+            }
+        }
+    }
+    // Check if collapsible horizontally
+    for(Row* row : grid) {
+        for(int col = 0; col < size-1; col++) {
+            Tile* current = row->at(col);
+            Tile* next = row->at(col+1);
+            if(current->getValue() == next->getValue()) {
+                return false;
+            }
+        }
+    }
+    // Check if collapsible vertically
+    for(int col = 0; col < size; col++) {
+        for(int row = 0; row < size-1; row++) {
+            Tile* current = grid.at(row)->at(col);
+            Tile* next = grid.at(row+1)->at(col);
+            if(current->getValue() == next->getValue()) {
                 return false;
             }
         }
@@ -96,10 +117,10 @@ bool Grid::addH(dirH dir) {
     bool addedAnyTwo = false;
     for(auto row : grid) {
         int col = dir == LEFT ? 0 : size-2;
-        while(dir == LEFT ? col < size-1 : 0 < col) {
+        while(dir == LEFT ? col < size-1 : 0 <= col) {
             Tile* left = row->at(col);
             Tile* right = row->at(col+1);
-            bool added = dir == LEFT ? left->add(right) : right->add(left);
+            bool added = left->add(right);
             if(added) {
                 col = dir == LEFT ? col+2 : col-2;
                 addedAnyTwo = true;
@@ -151,7 +172,7 @@ bool Grid::addV(dirV dir) {
     bool addedAnyTwo = false;
     for(int col = 0; col < size; col++) {
         int row = dir == UP ? 0 : size-2;
-        while(dir == UP ? row < size-1 : 0 < row) {
+        while(dir == UP ? row < size-1 : 0 <= row) {
             Tile* up = grid.at(row)->at(col);
             Tile* down = grid.at(row + 1)->at(col);
             bool added = up->add(down);
