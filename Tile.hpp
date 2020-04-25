@@ -14,13 +14,24 @@ private:
 public:
     Tile();
 
-    Tile operator+ (const Tile& rhs);
+    bool add(Tile* tile);
+    int getValue();
 
-    int getValue() const;
-    bool isEmpty() const;
+    void setValue(int value);
+
+    bool isEmpty();
+    void erase();
     void makeVisible();
-    bool hasWinValue() const;
+    bool hasWinValue();
 };
 
 
 #endif //INC_2048_TILE_H
+
+// TODO
+// implement move & collapse for other directions
+// only add new tile if successful move
+
+// for animation
+// implement position struct (x,y)
+// add previous and current position

@@ -11,15 +11,24 @@
 #include <sstream>
 #include <vector>
 
+//TODO define type for row
+
 class Grid {
 private:
     int size;
-    std::vector<std::vector<Tile>> grid;
+    std::vector<std::vector<Tile*>*> grid;
 public:
     explicit Grid(int size);
 
+    virtual ~Grid();
+
     void display();
     bool moveTiles();
+
+    void leftMoveTiles();
+    bool leftAdd();
+    bool leftCollapse();
+
     bool insertTile();
     bool isWin();
     bool isLose();

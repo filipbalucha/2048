@@ -7,12 +7,9 @@
 
 Tile::Tile() : value(EMPTY_VALUE){}
 
-Tile Tile::operator+ (const Tile& rhs) {
-    // TODO temp
-    return *this;
-}
 
-int Tile::getValue() const {
+
+int Tile::getValue() {
     return value;
 }
 
@@ -20,13 +17,31 @@ void Tile::makeVisible() {
     value = (double)rand() / RAND_MAX < 0.9 ? 2 : 4;
 }
 
-bool Tile::hasWinValue() const {
+bool Tile::hasWinValue() {
     return value == WIN_VALUE;
 }
 
-bool Tile::isEmpty() const {
+bool Tile::isEmpty() {
     return value == EMPTY_VALUE;
 }
 
+bool Tile::add(Tile *other) {
+    if(isEmpty()) {
+        return false;
+    }
+    if(value != other->getValue()) {
+        return false;
+    }
+    value *= 2;
+    other->erase();
+    return true;
+}
 
+void Tile::erase() {
+    value = EMPTY_VALUE;
+}
+
+void Tile::setValue(int value) {
+    Tile::value = value;
+}
 
